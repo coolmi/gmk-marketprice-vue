@@ -1,20 +1,12 @@
 
 export default {
-  // rules() {
-  //   var _this = this;
-  //   var checkAge = (rule, value, callback) => {
-  //     _this._request.post('/form/data/unique/'+_this._formName+'/age', _this._form.getFormData(), function(data){
-  //       if(data.status == false) {
-  //         callback(new Error('违反唯一性校验'));
-  //       }
-  //     });
-  //   };
-  //   return {
-  //     age: [
-  //       { validator: checkAge, trigger: 'blur' }
-  //     ]
-  //   }
-  // },
+  rules() {
+    // return {
+    //   age: [
+    //     { validator: this.validator.unique, trigger: 'blur' }
+    //   ]
+    // }
+  },
   methods: {
     init() {
       let _this = this;

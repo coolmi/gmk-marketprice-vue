@@ -15,9 +15,10 @@
           <template slot-scope="scope">
             <el-select v-model="scope.row.validator" placeholder="">
               <el-option label="必填" value="required"></el-option>
-              <el-option label="最小值" value="min"></el-option>
-              <el-option label="最大值" value="min"></el-option>
+              <el-option label="最小长度" value="min"></el-option>
+              <el-option label="最大长度" value="max"></el-option>
               <el-option label="正则表达式" value="pattern"></el-option>
+              <el-option label="唯一值" value="unique"></el-option>
             </el-select>
           </template>
         </el-table-column>
