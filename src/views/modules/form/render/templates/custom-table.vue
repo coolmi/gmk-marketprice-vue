@@ -107,6 +107,12 @@
       setFormKeyData(key, value) {
         Vue.set(this.formData, key, value);
       },
+      getFormKeyData(key) {
+        if(key in this.formData) {
+          return this.formData[key];
+        }
+        return null;
+      },
       getFormData() {
         return this.formData;
       },
@@ -123,6 +129,9 @@
           return this.tempData[key];
         }
         return null;
+      },
+      getTempData() {
+        return this.tempData;
       },
       openSubForm(subFormName, state, params) {
         this.$http({
