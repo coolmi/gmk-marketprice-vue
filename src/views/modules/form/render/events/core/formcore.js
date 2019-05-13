@@ -46,7 +46,7 @@ export default function (formName, form, formconfig) {
           _form0.setFormKeyData(_formName0, data.formData);
 
           if(callback) {
-            callback();
+            callback(data.formData);
           }
         }
         else {
@@ -63,7 +63,7 @@ export default function (formName, form, formconfig) {
             _form0.setFormData(data.formData);
 
             if(callback) {
-              callback();
+              callback(data.formData);
             }
           }
           else {
@@ -89,7 +89,7 @@ export default function (formName, form, formconfig) {
             }
           }
           if(callback) {
-            callback();
+            callback(data.formData);
           }
         }
         else {
@@ -110,7 +110,7 @@ export default function (formName, form, formconfig) {
             }
           }
           if(callback) {
-            callback();
+            callback(data.formData);
           }
         }
         else {

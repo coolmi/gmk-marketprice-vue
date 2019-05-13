@@ -142,6 +142,17 @@
       getTempData() {
         return this.tempData;
       },
+      getFormElement() {
+        return this.$refs[this.formName];
+      },
+      getFormKeyElement(key) {
+        return this.$refs[this.formName].$refs[key][0];
+      },
+      nextTick(callback) {
+        this.$nextTick(() => {
+          callback();
+        })
+      },
       openSubForm(subFormName, state, params) {
         this.$http({
           url: this.$http.adornUrl('/form/pageinfo/wcode/' + subFormName),

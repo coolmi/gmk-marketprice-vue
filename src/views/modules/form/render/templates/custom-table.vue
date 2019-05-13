@@ -133,6 +133,11 @@
       getTempData() {
         return this.tempData;
       },
+      nextTick(callback) {
+        this.$nextTick(() => {
+          callback();
+        })
+      },
       openSubForm(subFormName, state, params) {
         this.$http({
           url: this.$http.adornUrl('/form/pageinfo/wcode/' + subFormName),
