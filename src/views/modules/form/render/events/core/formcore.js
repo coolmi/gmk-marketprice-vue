@@ -37,26 +37,34 @@ export default function (formName, form, formconfig) {
         },
       }
     },
-    _initTable: function(initTableUrl) {
+    _initTable: function(initTableUrl, callback) {
       var _form0 = this._form;
       var _formName0 = this._formName;
       var _formParams = this._form.getFormParams();
       this._request.get(initTableUrl, _formParams, function (data) {
         if (data && data.code === 0) {
           _form0.setFormKeyData(_formName0, data.formData);
+
+          if(callback) {
+            callback();
+          }
         }
         else {
           _form0.$message.error(data.msg)
         }
       });
     },
-    _initForm: function(initFormUrl, initEmptyFormFunc) {
+    _initForm: function(initFormUrl, callback, initEmptyFormFunc) {
       var _form0 = this._form;
       var _formParams = this._form.getFormParams();
       this._request.get(initFormUrl, _formParams, function (data) {
         if (data && data.code === 0) {
           if(data.formData != null && typeof data.formData != 'undefined' && Object.keys(data.formData).length>0) {
             _form0.setFormData(data.formData);
+
+            if(callback) {
+              callback();
+            }
           }
           else {
             if(initEmptyFormFunc) {
@@ -69,7 +77,7 @@ export default function (formName, form, formconfig) {
         }
       });
     },
-    _initEmptyForm: function(initEmptyFormUrl) {
+    _initEmptyForm: function(initEmptyFormUrl, callback) {
       var _form0 = this._form;
       var _formParams = this._form.getFormParams();
       this._request.get(initEmptyFormUrl, _formParams, function (data) {
@@ -80,13 +88,16 @@ export default function (formName, form, formconfig) {
               _form0.setFormParam(ikey, data.formData[ikey]);
             }
           }
+          if(callback) {
+            callback();
+          }
         }
         else {
           _form0.$message.error(data.msg)
         }
       });
     },
-    _initPratUI(initPratUIFormUrl, column) {
+    _initPratUI(initPratUIFormUrl, column, callback) {
       //局部刷新列表
       var _form0 = this._form;
       // var _formName0 = this._formName;
@@ -98,6 +109,12 @@ export default function (formName, form, formconfig) {
               _form0.setFormKeyData(nkey, data.formData[nkey]);
             }
           }
+          if(callback) {
+            callback();
+          }
+        }
+        else {
+          _form0.$message.error(data.msg)
         }
       });
     },

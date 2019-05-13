@@ -11,7 +11,7 @@ export default {
   methods: {
     init() {
       let _this = this;
-      this._initForm('/form/data/info/' + this._formName, function() {
+      this._initForm('/form/data/info/' + this._formName, null,function() {
         _this._initEmptyForm('/form/data/initEmptyForm/' + _this._formName);  ////初始化ID
       });
     },
