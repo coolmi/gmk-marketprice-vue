@@ -237,8 +237,16 @@
                       </el-form-item>
                     </el-row>
                     <el-row v-for="(item, index) in detailForm.attributes" :key="index">
-                      <el-form-item :label="item.atrname" >
-                        <el-input v-model="item.atrval" placeholder=""></el-input>
+                      <el-form-item :label="item.atrname + (item.isel==='1'?'(dx)':'') + (item.isnotnull==='1' ? '*' : '')" >
+                        <el-input v-model="item.atrval" placeholder="" v-if="item.atruitype==='0'"></el-input>
+                        <el-select v-model="item.atrval" placeholder="" v-if="item.atruitype==='1'">
+                          <el-option
+                            v-for="uiitem in uidatasource(item.atrdatasource)"
+                            :key="uiitem.key"
+                            :label="uiitem.name"
+                            :value="uiitem.key">
+                          </el-option>
+                        </el-select>
                       </el-form-item>
                     </el-row>
                     <el-row type="flex" justify="center">
@@ -752,6 +760,19 @@
       },
       closeDialog() {
         this.$emit('refreshDataList')
+      },
+      uidatasource(datasource) {
+        var arr = [];
+        if(datasource) {
+          var items = datasource.split(",");
+          for(var item of items) {
+            var o = {};
+            o.key = item.split(":")[0];
+            o.name = item.split(":")[1];
+            arr.push(o);
+          }
+        }
+        return arr;
       }
     },
     mounted() {

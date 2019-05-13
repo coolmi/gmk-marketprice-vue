@@ -46,14 +46,14 @@
           },
           datasource: function() {
             if(this.formSchema.ui.datasource.type == 'dict') {  //取自字典
-              const dictgroupcode = this.formSchema.ui.datasource.dictgroupcode;
+              const dictgroupcode = this.formSchema.ui.datasource.parameter;
               return dictgroupcode;
             }
             else if(this.formSchema.ui.datasource.type == 'static') {  //静态数据源
               return 'static';
             }
             else if(this.formSchema.ui.datasource.type == 'url') {  //取自URL
-              const url = this.formSchema.ui.datasource.url;
+              const url = this.formSchema.ui.datasource.parameter;
               return url;
             }
           },
@@ -130,7 +130,7 @@
         methods: {
           initdatasrouce() {
             if(this.formSchema.ui.datasource.type == 'dict') {  //取自字典
-              const dictgroupcode = this.formSchema.ui.datasource.dictgroupcode;
+              const dictgroupcode = this.formSchema.ui.datasource.parameter;
               this.$http({
                 url: this.$http.adornUrl(`/sys/dict/group/${dictgroupcode}`),
                 method: 'get',
@@ -142,38 +142,51 @@
               })
             }
             else if(this.formSchema.ui.datasource.type == 'static') {  //静态数据源
-              this.options = this.formSchema.ui.datasource.options;
+              var datasource = this.formSchema.ui.datasource.parameter;
+              this.options = str2arr(datasource);
             }
             else if(this.formSchema.ui.datasource.type == 'url') {  //取自URL
-              const url = this.formSchema.ui.datasource.url;
-              const resultkey = this.formSchema.ui.datasource.resultkey;
+              const url = this.formSchema.ui.datasource.parameter;
               this.$http({
                 url: this.$http.adornUrl(url),
                 method: 'get',
                 params: this.$http.adornParams()
               }).then(({data}) => {
                 if (data && data.code === 0) {
-                  this.options = data[resultkey];
+                  this.options = data['formData'];
                 }
               })
             }
           },
+          str2arr(datasource) {
+            var arr = [];
+            if(datasource) {
+              var items = datasource.split(",");
+              for(var item of items) {
+                var o = {};
+                o.key = item.split(":")[0];
+                o.name = item.split(":")[1];
+                arr.push(o);
+              }
+            }
+            return arr;
+          },
           change: function (value) {
             var _mkey = this.formSchema.key + "_change";
             if(this.formEvent != null && typeof this.formEvent != 'undefined' && _mkey in this.formEvent) {
-              this.formEvent[_mkey](value);
+              this.formEvent[_mkey](value, this.options);
             }
           },
           blur: function (event) {
             var _mkey = this.formSchema.key + "_blur";
             if(this.formEvent != null && typeof this.formEvent != 'undefined' && _mkey in this.formEvent) {
-              this.formEvent[_mkey](event);
+              this.formEvent[_mkey](event, this.options);
             }
           },
           focus: function (event) {
             var _mkey = this.formSchema.key + "_focus";
             if(this.formEvent != null && typeof this.formEvent != 'undefined' && _mkey in this.formEvent) {
-              this.formEvent[_mkey](event);
+              this.formEvent[_mkey](event, this.options);
             }
           }
         },
