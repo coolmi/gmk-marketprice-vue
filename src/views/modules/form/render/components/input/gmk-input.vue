@@ -116,6 +116,13 @@
               trigger: item.trigger
             });
           }
+          else if(item.validator == "unique") {
+            this.rules.push({
+              validator: this.formEvent.validator.unique,
+              message: item.message,
+              trigger: item.trigger
+            });
+          }
         }
       }
 

@@ -21,6 +21,22 @@ export default function (formName, form, formconfig) {
       get: get,
       post: post,
     },
+    validator: function() {
+      let _this = this;
+      return {
+        unique(rule, value, callback) {   //唯一性校验
+          let _message = this.message;
+          _this._request.post('/form/data/unique/'+_this._formName+'/'+this.field, _this._form.getFormData(), function(data){
+            if(data.status == false) {
+              callback(new Error(_message));
+            }
+            else {
+              callback();
+            }
+          });
+        },
+      }
+    },
     _initTable: function(initTableUrl) {
       var _form0 = this._form;
       var _formName0 = this._formName;
@@ -216,6 +232,7 @@ export default function (formName, form, formconfig) {
       formcore[methodkey] = formconfig.methods[methodkey];
     }
   }
+  formcore.validator = formcore.validator();
   if(formconfig.rules != null && typeof formconfig.rules != 'undefined') {
     formcore.rules = formconfig.rules;
     formcore.rules = formcore.rules();  //方法转对象
