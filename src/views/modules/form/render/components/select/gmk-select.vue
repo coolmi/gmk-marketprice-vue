@@ -174,19 +174,19 @@
           change: function (value) {
             var _mkey = this.formSchema.key + "_change";
             if(this.formEvent != null && typeof this.formEvent != 'undefined' && _mkey in this.formEvent) {
-              this.formEvent[_mkey](value);
+              this.formEvent[_mkey](value, this.options);
             }
           },
           blur: function (event) {
             var _mkey = this.formSchema.key + "_blur";
             if(this.formEvent != null && typeof this.formEvent != 'undefined' && _mkey in this.formEvent) {
-              this.formEvent[_mkey](event);
+              this.formEvent[_mkey](event, this.options);
             }
           },
           focus: function (event) {
             var _mkey = this.formSchema.key + "_focus";
             if(this.formEvent != null && typeof this.formEvent != 'undefined' && _mkey in this.formEvent) {
-              this.formEvent[_mkey](event);
+              this.formEvent[_mkey](event, this.options);
             }
           }
         },

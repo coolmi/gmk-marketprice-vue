@@ -6,6 +6,7 @@ export default {
     //     { validator: this.validator.unique, trigger: 'blur' }
     //   ]
     // }
+    return {}
   },
   methods: {
     init() {
