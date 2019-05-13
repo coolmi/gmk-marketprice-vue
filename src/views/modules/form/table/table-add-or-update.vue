@@ -308,13 +308,14 @@
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
+          console.log(data.columns);
           if (data && data.code === 0) {
             var _columns = data.columns;
             if(_columns) {
               for(var c of _columns) {
                 var _collength = 0;
                 var _colprecision = 0;
-                if(c.DATA_TYPE == 'bigint') {
+                if(c.DATA_TYPE == 'bigint' || c.DATA_TYPE == 'decimal') {
                   _collength = c.NUMERIC_PRECISION;
                   _colprecision = c.NUMERIC_SCALE;
                 }
