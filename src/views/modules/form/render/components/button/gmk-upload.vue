@@ -64,8 +64,10 @@
               }
             })
           } else {
-            // this.$message.error(data.msg)
-            this.messages = data.errmsg;
+            this.messages = data.result;
+            if(data.msg) {
+              this.$message.error(data.msg)
+            }
           }
           this.loading.close();
         },

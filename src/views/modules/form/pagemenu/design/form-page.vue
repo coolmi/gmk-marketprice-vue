@@ -228,12 +228,12 @@
                   <el-form :model="detailForm" ref="dataForm" label-width="80px">
                     <el-row>
                       <el-form-item label="字段KEY">
-                        <el-input v-model="detailForm.colkey" placeholder="" readonly="true"></el-input>
+                        <el-input v-model="detailForm.colkey" placeholder="" :readonly="true"></el-input>
                       </el-form-item>
                     </el-row>
                     <el-row>
                       <el-form-item label="字段名称">
-                        <el-input v-model="detailForm.colname" placeholder="" readonly="true"></el-input>
+                        <el-input v-model="detailForm.colname" placeholder="" :readonly="true"></el-input>
                       </el-form-item>
                     </el-row>
                     <el-row v-for="(item, index) in detailForm.attributes" :key="index">
@@ -349,9 +349,10 @@
         </el-tab-pane>
         <el-tab-pane label="JS" v-if="dataForm.id">
           <el-row>
-            <codemirror ref="jsEditor" :options="{
+            <div v-if="dataForm.jstext != null && dataForm.jstext != ''">有代码，点击一下就能查看（此处有个不自动显示代码的bug）</div>
+            <codemirror height="600px" ref="jsEditor" :options="{
                     mode: 'javascript'
-                  }" v-model="dataForm.jstext"></codemirror>
+                  }" v-model="dataForm.jstext == null ? '' : dataForm.jstext"></codemirror>
           </el-row>
         </el-tab-pane>
       </el-tabs>

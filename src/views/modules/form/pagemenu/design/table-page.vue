@@ -367,9 +367,10 @@
         </el-tab-pane>
         <el-tab-pane label="JS" v-if="dataForm.id">
           <el-row>
+            <div v-if="dataForm.jstext != null && dataForm.jstext != ''">有代码，点击一下就能查看（此处有个不自动显示代码的bug）</div>
             <codemirror ref="jsEditor" :options="{
                     mode: 'javascript'
-                  }" v-model="dataForm.jstext"></codemirror>
+                  }" v-model="dataForm.jstext == null ? '' : dataForm.jstext"></codemirror>
           </el-row>
         </el-tab-pane>
       </el-tabs>
