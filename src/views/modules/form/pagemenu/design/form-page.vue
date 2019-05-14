@@ -154,20 +154,20 @@
               <el-table border
                         :data="dataForm.pageuis" height="350" @row-click="handleUIRowClick"
                         style="width: 100%">
-                <el-table-column label="存储模型" fixed="left" width="200">
+                <el-table-column label="字段名称" fixed="left" width="180">
                   <template slot-scope="scope">
-                    <el-autocomplete class="inline-input" v-model="scope.row.tablename" value-key="tablename"
-                                     :fetch-suggestions="querySearchTable" placeholder=""></el-autocomplete>
+                    <el-input v-model="scope.row.colname" placeholder=""></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="字段KEY" fixed="left" width="180">
+                <el-table-column label="字段KEY" width="180">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.colkey" placeholder=""></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="字段名称" fixed="left" width="180">
+                <el-table-column label="存储模型" width="200">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.colname" placeholder=""></el-input>
+                    <el-autocomplete class="inline-input" v-model="scope.row.tablename" value-key="tablename"
+                                     :fetch-suggestions="querySearchTable" placeholder=""></el-autocomplete>
                   </template>
                 </el-table-column>
                 <el-table-column label="分组" width="140">
