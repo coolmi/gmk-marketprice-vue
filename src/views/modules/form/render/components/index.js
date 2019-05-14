@@ -3,6 +3,7 @@ import gmkselect from './select/gmk-select'
 import gmkradio from './radio/gmk-radio'
 import gmkcheckbox from './checkbox/gmk-checkbox'
 import gmkdate from './datetime/gmk-date'
+import gmkdaterange from './datetime/gmk-daterange'
 import gmkfile from './file/gmk-file'
 import gmkbutton from './button/gmk-button'
 import gmkbuttonlink from './button/gmk-button-link'
@@ -24,6 +25,7 @@ const gmkcomponents = {
     Vue.component('gmk-radio', gmkradio);
     Vue.component('gmk-checkbox', gmkcheckbox);
     Vue.component('gmk-date', gmkdate);
+    Vue.component('gmk-daterange', gmkdaterange);
     Vue.component('gmk-file', gmkfile);
     Vue.component('gmk-button', gmkbutton);
     Vue.component('gmk-button-link', gmkbuttonlink);
