@@ -10,7 +10,7 @@
   // import customPagetable from './templates/custom-pagetable'
 
   export default {
-    name: "main",
+    name: "mainForm",
     props: {
       formmenu: String
     },
