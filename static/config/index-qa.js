@@ -5,7 +5,7 @@
   window.SITE_CONFIG = {};
 
   // api接口请求地址
-  window.SITE_CONFIG['baseUrl'] = 'http://demo.renren.io/renren-fast';
+  window.SITE_CONFIG['baseUrl'] = 'http://10.5.1.253:10012/gmk-marketprice';
 
   // cdn地址 = 域名 + 版本号
   window.SITE_CONFIG['domain']  = './'; // 域名
