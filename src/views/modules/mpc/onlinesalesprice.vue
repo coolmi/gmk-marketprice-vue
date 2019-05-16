@@ -1,13 +1,13 @@
 <template>
   <div class="mod-demo-echarts">
-    <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+    <el-form :inline="true" :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-date-picker v-model="dataForm.beginDate" type="date" placeholder="开始日期" clearable></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-date-picker v-model="dataForm.endDate" type="date" placeholder="结束日期" clearable></el-date-picker>
       </el-form-item>
-      <el-form-item>
+      <el-form-item >
         <el-select v-model="dataForm.product" multiple placeholder="商品">
           <el-option v-for="item in productList" :key="item.prodcode" :label="item.prodname" :value="item.prodcode"></el-option>
         </el-select>
@@ -33,22 +33,66 @@
       </el-form-item>
     </el-form>
 
-    <!--<el-alert-->
-    <!--title="提示："-->
-    <!--type="warning"-->
-    <!--:closable="false">-->
-    <!--<div slot-scope="description">-->
-    <!--<p class="el-alert__description">1. 此Demo只提供ECharts官方使用文档，入门部署和体验功能。具体使用请参考：http://echarts.baidu.com/index.html</p>-->
-    <!--</div>-->
-    <!--</el-alert>-->
+    <el-tabs>
+      <el-tab-pane label="列表">
+        <el-table
+          :data="dataList"
+          border
+          v-loading="dataListLoading"
+          style="width: 100%;">
+          <el-table-column
+            prop="name"
+            header-align="center"
+            align="center"
+            label="名称">
+          </el-table-column>
+          <el-table-column
+            prop="price"
+            header-align="center"
+            align="center"
+            label="价格">
+          </el-table-column>
+          <el-table-column
+            prop="promotionPrice"
+            header-align="center"
+            align="center"
+            label="活动价格">
+          </el-table-column>
+          <el-table-column
+            prop="salesVolume"
+            header-align="center"
+            align="center"
+            label="销量">
+          </el-table-column>
+          <el-table-column
+            prop="salesDate"
+            header-align="center"
+            align="center"
+            label="销售日期">
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
 
-    <el-row :gutter="20">
-      <el-col :span="24">
-        <el-card>
-          <div id="J_chartLineBox" class="chart-box"></div>
-        </el-card>
-      </el-col>
-    </el-row>
+      <el-tab-pane label="价格折线图">
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-card>
+              <div id="J_chartLineBox" class="chart-box"></div>
+            </el-card>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+
+      <el-tab-pane label="销量柱状图">
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-card>
+              <div id="J_chartBarBox" class="chart-box"></div>
+            </el-card>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -74,7 +118,11 @@
         merchantList: [],
         specificationList: [],
         platformList: [],
-        chartLine: null
+        chartLine: null,
+        dataListLoading: false,
+        dataRule: {
+          product : [{ required: true, message: '商品不能为空',trigger: 'blur' }]
+        }
       }
     },
     created: function () {
@@ -90,27 +138,31 @@
     methods: {
       // 获取数据列表
       getDataList () {
-        this.$http({
-          url: this.$http.adornUrl('/mpc/mpcOnlinesales/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'beginDate': this.dataForm.beginDate,
-            'endDate': this.dataForm.endDate,
-            'weight': this.dataForm.weight.toString(),
-            'platform': this.dataForm.platform.toString(),
-            'merchant': this.dataForm.merchant.toString(),
-            'product': this.dataForm.product.toString()
-          })
-        }).then(({data}) => {
-          // debugger
-          console.log(data)
-          if (data && data.code === 0) {
-            // this.dataList = data.list
-            this.initChartLine(data)
-          } else {
-            this.dataList = []
+        this.dataListLoading = true
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            this.$http({
+              url: this.$http.adornUrl('/mpc/mpcOnlinesales/list'),
+              method: 'get',
+              params: this.$http.adornParams({
+                'beginDate': this.dataForm.beginDate,
+                'endDate': this.dataForm.endDate,
+                'weight': this.dataForm.weight.toString(),
+                'platform': this.dataForm.platform.toString(),
+                'merchant': this.dataForm.merchant.toString(),
+                'product': this.dataForm.product.toString()
+              })
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                this.dataList = data.list
+                this.initChartLine(data)
+              } else {
+                this.dataList = []
+              }
+            })
           }
         })
+        this.dataListLoading = false
       },
       getSelectOptions () {
         this.$http({
@@ -127,29 +179,27 @@
       },
       initChartLine (data) {
         let seriesData = []
-
+        debugger
         for (let i = 0; i < data.legendData.length; i++) {
           seriesData.push({
             'type': 'line',
-            // 'seriesLayoutBy': 'column',
+            'seriesLayoutBy': 'column',
             'connectNulls': true
           })
         }
-        let sourceData = []
 
-        for(let k =0; k < data.reportList.length; k ++){
-          // var sourceItem = '{'
-          // for (let j = 0; j < data.legendData.length; j++) {
-          //   debugger
-          //   sourceItem = sourceItem +  data.legendData[j] + ':' + data.reportList[k].map[data.legendData[j]] + ','
-          // }
-          // sourceItem =  sourceItem + '}
-          let sourceItem = JSON.stringify(data.reportList[k])
-          sourceData.push(sourceItem)
+        for(let i = 0; i < data.reportList.length; i++){
+          var lineData = data.reportList[i]
+          for (let k of Object.keys(lineData)) {
+            if(k == 'salesDate'){
+              lineData[k] = this.stringToDate(lineData[k]);
+            }
+          }
         }
+
         let dataset = {
           dimensions: data.legendData,
-          source: sourceData
+          source: data.reportList
         }
         let option = {
           'title': {
@@ -173,21 +223,53 @@
             }
           },
           'xAxis': {
-            'type': 'category'
+            'type': 'time',
+            formatter (value, index) {
+              // 格式化成月/日，只在第一个刻度显示年份
+              var date = new Date(value)
+              var texts = [(date.getMonth() + 1), date.getDate()]
+              if (index === 0) {
+                texts.unshift(date.getYear())
+              }
+              return texts.join('/')
+            }
           },
           'yAxis': {
-
+              type:'value'
           },
           'dataset': dataset,
           'series': seriesData
         }
-        debugger
         this.chartLine = echarts.init(document.getElementById('J_chartLineBox'))
-        console.log(option.toString())
+        console.log(JSON.stringify(option))
         this.chartLine.setOption(option)
         window.addEventListener('resize', () => {
           this.chartLine.resize()
         })
+      },
+      stringToDate (dateStr, separator) {
+        if (!separator) {
+          separator = '-'
+        }
+        let dateArr = dateStr.split(separator)
+        let year = parseInt(dateArr[0])
+        let month
+        // 处理月份为04这样的情况
+        if (dateArr[1].indexOf('0') === 0) {
+          month = parseInt(dateArr[1].substring(1))
+        } else {
+          month = parseInt(dateArr[1])
+        }
+        let day = parseInt(dateArr[2])
+        let date = new Date(year, month, day)
+        return date
+      },
+      objToStrMap(obj) {
+        let strMap = new Map();
+        for (let k of Object.keys(obj)) {
+          strMap.set(k, obj[k]);
+        }
+        return strMap;
       }
     }
   }

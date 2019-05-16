@@ -35,8 +35,9 @@
     <el-tabs>
       <el-tab-pane label="列表">
         <el-table
-          :data="tableDataList"
+          :data="dataList"
           border
+          v-loading="dataListLoading"
           style="width: 100%;">
           <el-table-column
             prop="name"
@@ -92,7 +93,6 @@
       </el-tab-pane>
     </el-tabs>
 
-
   </div>
 </template>
 
@@ -114,12 +114,13 @@
           weight: ''
         },
         activeName : 'first',
-        tableDataList: [],
+        dataList: [],
         productList: [],
         merchantList: [],
         specificationList: [],
         platformList: [],
         chartLine: null,
+        dataListLoading: false,
         dataRule: {
           product : [{ required: true, message: '商品不能为空',trigger: 'blur' }]
         }
@@ -138,6 +139,7 @@
     methods: {
       // 获取数据列表
       getDataList () {
+        this.dataListLoading = true
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
@@ -153,11 +155,11 @@
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.tableDataList = data.list
+                this.dataList = data.list
                 this.initChartLine(data)
                 this.initChartBar(data)
               } else {
-                this.tableDataList = []
+                this.dataList = []
                 this.chartLine = Highcharts.chart(document.getElementById('J_chartLineBox'), {
                   'title': {
                     'text': '暂无数据'
@@ -172,6 +174,7 @@
             })
           }
         })
+        this.dataListLoading = false
       },
       getSelectOptions () {
         this.$http({
@@ -268,7 +271,7 @@
             type: 'column'
           },
           'title': {
-            'text': '价格跟踪折线图'
+            'text': '销量柱状图'
           },
           'legend': {
             'data': data.legendData
@@ -301,7 +304,7 @@
           },
           'yAxis': {
             title: {
-              text: '价格'
+              text: '销量'
             },
             min: 0
           },
