@@ -106,8 +106,8 @@
     data () {
       return {
         dataForm: {
-          beginDate: lastWeek.toLocaleDateString(),
-          endDate: today.toLocaleDateString(),
+          beginDate: lastWeek,
+          endDate: today,
           platform: '',
           merchant: '',
           product: '',
@@ -141,7 +141,9 @@
       getDataList () {
         this.dataListLoading = true
         this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
+          if(this.dataForm.beginDate > this.dataForm.endDate){
+            alert('开始日期不能大于结束日期');
+          }else if (valid) {
             this.$http({
               url: this.$http.adornUrl('/mpc/mpcOnlinesales/list2'),
               method: 'get',
@@ -195,6 +197,7 @@
           let legend = data.legendData[i]
           let lineList = data.reportList[legend]
           let showData = []
+          debugger
           for (let j = 0; j < lineList.length; j++) {
             showData[j] = [this.stringToDate(lineList[j].salesDate), lineList[j].price]
           }
@@ -236,8 +239,8 @@
             title: {
               text: '日期'
             },
-            softMin : this.stringToDate(this.dataForm.beginDate, '/'),
-            softMax : this.stringToDate(this.dataForm.endDate, '/')
+            softMin : this.dataForm.beginDate,
+            softMax : this.dataForm.endDate
           },
           'yAxis': {
             title: {
@@ -258,6 +261,7 @@
           let legend = data.legendData[i]
           let lineList = data.reportList[legend]
           let showData = []
+          debugger
           for (let j = 0; j < lineList.length; j++) {
             showData[j] = [this.stringToDate(lineList[j].salesDate), lineList[j].salesVolume]
           }
@@ -299,8 +303,8 @@
             title: {
               text: '日期'
             },
-            softMin : this.stringToDate(this.dataForm.beginDate, '/'),
-            softMax : this.stringToDate(this.dataForm.endDate, '/')
+            softMin : this.dataForm.beginDate,
+            softMax : this.dataForm.endDate
           },
           'yAxis': {
             title: {
