@@ -19,18 +19,26 @@ const _import = require('./import-' + process.env.NODE_ENV)
 const globalRoutes = [
   { path: '/404', component: _import('common/404'), name: '404', meta: { title: '404未找到' } },
   { path: '/500', component: _import('common/500'), name: '500', meta: { title: '服务器异常' } },
+  { path: '/login', component: _import('common/login'), name: 'login', meta: { title: '登录' }, beforeEnter: (to, from, next) => {
+      http({
+        url: http.adornUrl('/cas/open'),
+        method: 'get',
+        params: http.adornParams()
+      }).then(({data}) => {
+        if (data && data.code === 0) {
+          if(data.result) {
+            window.location.href = http.adornUrl('/cas/login')
+          }
+          else {
+            next();
+          }
+        }
+      }).catch((e) => {
+        next();
+      })
+    }
+  }
 ]
-if (process.env.NODE_ENV === 'production') {
-  globalRoutes.push(
-    { path: '/login', name: 'login', redirect: to => {
-        window.location.href = http.adornUrl('/cas/login')
-    }}
-  )
-} else {
-  globalRoutes.push(
-    { path: '/login', component: _import('common/login'), name: 'login', meta: { title: '登录' } }
-  )
-}
 
 // 主入口路由(需嵌套上左右整体布局)
 const mainRoutes = {
