@@ -51,7 +51,7 @@
             header-align="center"
             align="center"
             :render-header="labelHead"
-            label="名称">
+            label="   名称   ">
           </el-table-column>
           <el-table-column
             prop="price"
@@ -66,26 +66,26 @@
             align="center"
             label="活动价格">
           </el-table-column>
-          <el-table-column
-            prop="weight"
-            header-align="center"
-            align="center"
-            :render-header="labelHead"
-            label="规格">
-          </el-table-column>
+          <!--<el-table-column-->
+            <!--prop="weight"-->
+            <!--header-align="center"-->
+            <!--align="center"-->
+            <!--:render-header="labelHead"-->
+            <!--label="规格">-->
+          <!--</el-table-column>-->
           <el-table-column
             prop="pricePerKg"
             header-align="center"
             align="center"
             :render-header="labelHead"
-            label="平台价格（元/千克）">
+            label="平台价格(元/千克)">
           </el-table-column>
           <el-table-column
             prop="promotionPricePerKg"
             header-align="center"
             align="center"
             :render-header="labelHead"
-            label="活动价格（元/千克）">
+            label="活动价格(元/千克)">
           </el-table-column>
           <el-table-column
             prop="salePromotion"
@@ -293,8 +293,8 @@
             title: {
               text: '日期'
             },
-            softMin : this.dataForm.beginDate,
-            softMax : this.dataForm.endDate
+            softMin : Date.UTC(this.dataForm.beginDate.getFullYear(),this.dataForm.beginDate.getMonth(),this.dataForm.beginDate.getDate()),
+            softMax : Date.UTC(this.dataForm.endDate.getFullYear(),this.dataForm.beginDate.getMonth(),this.dataForm.beginDate.getDate())
           },
           'yAxis': {
             title: {
