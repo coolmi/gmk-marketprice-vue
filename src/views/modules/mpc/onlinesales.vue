@@ -40,16 +40,25 @@
           v-loading="dataListLoading"
           style="width: 100%;">
           <el-table-column
+            prop="salesDate"
+            header-align="center"
+            align="center"
+            :render-header="labelHead"
+            label="销售日期">
+          </el-table-column>
+          <el-table-column
             prop="name"
             header-align="center"
             align="center"
+            :render-header="labelHead"
             label="名称">
           </el-table-column>
           <el-table-column
             prop="price"
             header-align="center"
             align="center"
-            label="价格">
+            :render-header="labelHead"
+            label="平台价格">
           </el-table-column>
           <el-table-column
             prop="promotionPrice"
@@ -58,16 +67,53 @@
             label="活动价格">
           </el-table-column>
           <el-table-column
+            prop="weight"
+            header-align="center"
+            align="center"
+            :render-header="labelHead"
+            label="规格">
+          </el-table-column>
+          <el-table-column
+            prop="pricePerKg"
+            header-align="center"
+            align="center"
+            :render-header="labelHead"
+            label="平台价格（元/千克）">
+          </el-table-column>
+          <el-table-column
+            prop="promotionPricePerKg"
+            header-align="center"
+            align="center"
+            :render-header="labelHead"
+            label="活动价格（元/千克）">
+          </el-table-column>
+          <el-table-column
+            prop="salePromotion"
+            header-align="center"
+            align="center"
+            :render-header="labelHead"
+            label="活动方式">
+          </el-table-column>
+          <el-table-column
             prop="salesVolume"
             header-align="center"
             align="center"
-            label="销量">
+            :render-header="labelHead"
+            label="累计销量">
           </el-table-column>
           <el-table-column
-            prop="salesDate"
+            prop="mark"
             header-align="center"
             align="center"
-            label="销售日期">
+            :render-header="labelHead"
+            label="备注">
+          </el-table-column>
+          <el-table-column
+            prop="averagePrice"
+            header-align="center"
+            align="center"
+            :render-header="labelHead"
+            label="平均价格">
           </el-table-column>
         </el-table>
       </el-tab-pane>
@@ -82,7 +128,7 @@
         </el-row>
       </el-tab-pane>
 
-      <el-tab-pane label="销量柱状图">
+      <el-tab-pane label="累计销量柱状图">
         <el-row :gutter="20">
           <el-col :span="24">
             <el-card>
@@ -98,7 +144,8 @@
 
 <script>
   import Highcharts from 'highcharts'
-  let today = new Date()
+  let now = new Date()
+  let today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let lastWeekTime = today.getTime() - 7 * 24 * 60 * 60 * 1000
   let lastWeek = new Date(lastWeekTime)
 
@@ -148,8 +195,8 @@
               url: this.$http.adornUrl('/mpc/mpcOnlinesales/list2'),
               method: 'get',
               params: this.$http.adornParams({
-                'beginDate': this.dataForm.beginDate,
-                'endDate': this.dataForm.endDate,
+                'beginDate': this.dataForm.beginDate.getFullYear() + '-' + (this.dataForm.beginDate.getMonth()+ 1) + '-' + this.dataForm.beginDate.getDate(),
+                'endDate': this.dataForm.endDate.getFullYear() + '-' + (this.dataForm.endDate.getMonth()+ 1) + '-' + this.dataForm.endDate.getDate(),
                 'weight': this.dataForm.weight.toString(),
                 'platform': this.dataForm.platform.toString(),
                 'merchant': this.dataForm.merchant.toString(),
@@ -196,14 +243,13 @@
         for (let i = 0; i < data.legendData.length; i++) {
           let legend = data.legendData[i]
           let lineList = data.reportList[legend]
-          let showData = []
-          debugger
+          let lineShowDataArr = []
           for (let j = 0; j < lineList.length; j++) {
-            showData[j] = [this.stringToDate(lineList[j].salesDate), lineList[j].price]
+            lineShowDataArr[j] = { x : this.stringToDate(lineList[j].salesDate), y : lineList[j].price, name : lineList[j].mark}
           }
           seriesData[i] = {
             'name': legend,
-            'data': showData
+            'data': lineShowDataArr
           }
         }
         let option = {
@@ -217,8 +263,16 @@
             'data': data.legendData
           },
           tooltip: {
-            headerFormat: '<b>{series.name}</b><br>',
-            pointFormat: '{point.x:%Y-%m-%d}: ￥{point.y:.2f} '
+            headerFormat: '<b>{series.name}</b>{this.series.mark}<br>',
+          // pointFormat: '{point.x:%Y-%m-%d}: ￥{point.y:.2f}<br> {point.name}'
+            pointFormatter: function(){
+              let xDate = new Date(this.x)
+              let html = xDate.getFullYear() + '-' + (xDate.getMonth() + 1) + '-' + xDate.getDate() + ' ￥' + this.y
+              if(this.name != null){
+                html = html + '<br>' + this.name
+              }
+              return html
+            }
           },
           'grid': {
             'left': '3%',
@@ -263,7 +317,9 @@
           let showData = []
           debugger
           for (let j = 0; j < lineList.length; j++) {
-            showData[j] = [this.stringToDate(lineList[j].salesDate), lineList[j].salesVolume]
+            if(lineList[j].salesVolume != null){
+              showData.push({ x : this.stringToDate(lineList[j].salesDate), y : Number(lineList[j].salesVolume),  name : lineList[j].mark})
+            }
           }
           seriesData[i] = {
             'name': legend,
@@ -271,18 +327,26 @@
           }
         }
         let option = {
-          chart: {
-            type: 'column'
+          'chart': {
+            'type': 'column'
           },
           'title': {
-            'text': '销量柱状图'
+            'text': '累计销量柱状图'
           },
           'legend': {
             'data': data.legendData
           },
-          tooltip: {
-            headerFormat: '<b>{series.name}</b><br>',
-            pointFormat: '{point.x:%Y-%m-%d} {point.y:.2f}'
+          'tooltip': {
+            'headerFormat': '<b>{series.name}</b><br>',
+            // 'pointFormat': '{point.x:%Y-%m-%d} {point.y:.2f}'
+            pointFormatter: function(){
+              let xDate = new Date(this.x)
+              let html = xDate.getFullYear() + '-' + (xDate.getMonth() + 1) + '-' + xDate.getDate() + ' ￥' + this.y
+              if(this.name != null){
+                html = html + '<br>' + this.name
+              }
+              return html
+            }
           },
           'grid': {
             'left': '3%',
@@ -308,9 +372,8 @@
           },
           'yAxis': {
             title: {
-              text: '销量'
-            },
-            min: 0
+              text: '累计销量'
+            }
           },
           'series': seriesData
         }
@@ -335,6 +398,13 @@
         let day = parseInt(dateArr[2])
         let date = Date.UTC(year, month -1, day)
         return date
+      },
+      labelHead(h,{column,index}){
+        let l = column.label.length
+        let f = 16 //每个字大小，其实是每个字的比例值，大概会比字体大小差不多大一点，
+        column.minWidth = f*l //字大小乘个数即长度 ,注意不要加px像素，这里minWidth只是一个比例值，不是真正的长度
+        //然后将列标题放在一个div块中，注意块的宽度一定要100%，否则表格显示不完全
+        return h('div',{class:'table-head',style:{width:'100%'}},[column.label])
       }
     }
   }
@@ -356,4 +426,26 @@
       min-height: 400px;
     }
   }
+
+  .table-head{
+    font-size:14px!important;//设置固定的字体大小
+  }
+  .el-table .cell{
+    position:relative;
+  }
+  .el-table .caret-wrapper{
+    position:absolute;
+    top:2px;
+    right:0;
+  }
+  .el-table .cell, .el-table th div{
+    padding:0!important;
+  }
+  .el-table tr td .cell{
+    padding:5px 2px !important;
+  }
+  .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell{
+    padding-left:0 !important;
+  }
+
 </style>
